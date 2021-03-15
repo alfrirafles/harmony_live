@@ -52,6 +52,17 @@ select {
   display: block;
 }
 
+/* custom */
+.button-row {
+  margin-top: 3%;
+  justify-content: space-evenly;
+}
+
+#title {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
 /* Headers */
 header {
   width: 100%;
