@@ -36,3 +36,6 @@ npm-debug.log
 # IntelliJ IDEA specific files
 .idea
 *.iml
+
+# Keep database connection configuration files default.
+config/dev.exs
