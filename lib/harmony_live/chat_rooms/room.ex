@@ -10,6 +10,7 @@ defmodule HarmonyLive.ChatRooms.Room do
     field :keep_for, :naive_datetime
     belongs_to :users, User, foreign_key: :owner_id
     has_many :guests, Guest
+    has_many :messages, through: [:guests, :messages]
 
     timestamps()
   end
