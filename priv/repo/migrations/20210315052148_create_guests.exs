@@ -9,5 +9,6 @@ defmodule HarmonyLive.Repo.Migrations.CreateGuests do
       timestamps()
     end
 
+    create unique_index(:guests, [:room_id, :guest_id], name: :unique_guest)
   end
 end
