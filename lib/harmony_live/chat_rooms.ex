@@ -5,8 +5,9 @@ defmodule HarmonyLive.ChatRooms do
 
   import Ecto.Query, warn: false
   alias HarmonyLive.Repo
-  alias HarmonyLive.ChatRooms.{Room, Guest}
+  alias HarmonyLive.ChatRooms.{Room, Guest, Message}
   alias HarmonyLive.Users
+  alias HarmonyLive.Users.User
 
   @doc """
   Returns the list of rooms.
@@ -108,25 +109,57 @@ defmodule HarmonyLive.ChatRooms do
   """
   def append_guest(attrs) do
     %{"display_name" => name, "join_link" => join_link} = attrs
-    case Repo.get_by(Room, join_link: join_link) do
-      %Room{} = room ->
-        {:ok, user} = Users.create_user(%{"display_name" => name})
-        room
-        |> Ecto.build_assoc(:guests, [guest_id: room.id])
-        |> Guest.create_changeset(%{"room_id" => room.id, "guest_id" => user.id})
-        |> Repo.insert()
+    case Repo.exists?(User, display_name: name) do
+      false -> case Repo.get_by(Room, join_link: join_link) do
+                 %Room{} = room ->
+                   {:ok, user} = Users.create_user(%{"display_name" => name})
+                   room
+                   |> Ecto.build_assoc(:guests, [guest_id: room.id])
+                   |> Guest.create_changeset(%{"room_id" => room.id, "guest_id" => user.id})
+                   |> Repo.insert()
 
-        room
-        |> Repo.preload(:guests)
-      nil -> {:error, "Invalid join link."}
+                   room
+                   |> Repo.preload(:guests)
+                 nil -> {:error, "Invalid join link."}
+               end
+      true -> {:error, "Display name already taken."}
     end
+
   end
 
   @doc """
+  Append a single chat message to the message list of the room.
 
+  Parameters:
+  display_name - string
+  content - string
   """
-  def append_message(attrs) do
+  def append_message(%Room{} = room, attrs) do
+    %Room{guests: guests} = room
+                            |> Repo.preload(:guests)
+    sender = guests
+             |> Repo.preload(:users)
+             |> Enum.find(
+                  fn %Guest{
+                       users:
+                       %User{
+                         display_name: name
+                       }
+                     } -> name == attrs["display_name"]
+                  end
+                )
+    case sender do
+      nil -> {:error, "User not in the room!"}
+      _ -> attrs = Map.put(attrs, "sender_id", sender.id)
+           Message.create_changeset(%Message{}, attrs)
+           |> Repo.insert
+    end
+  end
 
+  def list_messages(%Room{} = room) do
+    %Room{messages: messages} = Repo.get(Room, room.id)
+                                |> Repo.preload(:messages)
+    messages
   end
 
   @doc """
