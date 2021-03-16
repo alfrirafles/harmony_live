@@ -12,9 +12,9 @@ defmodule HarmonyLive.ChatRooms.Message do
   end
 
   @doc false
-  def changeset(message, attrs) do
+  def create_changeset(message, attrs) do
     message
-    |> cast(attrs, [:content])
-    |> validate_required([:content])
+    |> cast(attrs, [:content, :sender_id])
+    |> validate_required([:content, :sender_id])
   end
 end
