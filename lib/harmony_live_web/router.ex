@@ -18,6 +18,8 @@ defmodule HarmonyLiveWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    live "/rooms/new", PageLive, :new
+    live "/rooms/join", PageLive, :join
   end
 
   # Other scopes may use custom stacks.
