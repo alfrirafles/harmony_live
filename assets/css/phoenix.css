@@ -63,6 +63,13 @@ select {
   margin-bottom: 8px;
 }
 
+.start-button{
+  padding: 7px;
+  border: 2px #0069d9 solid;
+  border-radius: 8px;
+  color: #000000;
+}
+
 /* Headers */
 header {
   width: 100%;
