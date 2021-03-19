@@ -1,17 +1,25 @@
 <section class="phx-hero">
   <h1>Harmony</h1>
+
+  <div>
+    <%= if @live_action in [:new, :join] do %>
+      <%= live_modal @socket, HarmonyLiveWeb.PageLive.FormComponent,
+      id: :new,
+      title: @page_title,
+      action: @live_action,
+      room: @room,
+      return_to: Routes.page_path(@socket, :index) %>
+    <% end %>
+  </div>
+
   <p>Whats english the opposite of discord? Harmony!</p>
   <small>Create a private message room anonymously (or with alias) with a privacy peace of mind.</small>
   <div class="row button-row">
-    <div class="col-md-3">
-      <form method="get" action="/rooms/new">
-        <button type="submit" class="get-started-btn">Create a Room</button>
-      </form>
+    <div class="col-md-3 start-button">
+          <%= live_patch "Create a Room", to: Routes.page_path(@socket, :new) %>
     </div>
-    <div class="col-md-3">
-      <form method="get" action="/rooms/join">
-        <button type="submit" class="get-started-btn">Join a room</button>
-      </form>
+    <div class="col-md-3 start-button">
+          <%= live_patch "Join a Room", to: Routes.page_path(@socket, :join) %>
     </div>
   </div>
 </section>
